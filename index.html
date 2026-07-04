@@ -1,11 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Executive Productivity Dashboard</title>
+    <!-- Tailwind CSS for Grid structure and base utility styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for advanced visual rendering -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for clean dashboard iconography -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -63,6 +67,7 @@
 
     <div class="max-w-[1700px] mx-auto space-y-6">
         
+        <!-- ================= HEADER REGION ================= -->
         <header class="flex justify-between items-center border-b border-teal-950/40 pb-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
@@ -76,17 +81,20 @@
             </div>
         </header>
 
+        <!-- ================= TOP SECTION: DYNAMIC ANALYTICS ================= -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Daily Progress (DYNAMIC) -->
             <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Daily Execution Volume</h2>
-                    <span class="text-[10px] bg-teal-950 text-teal-400 border border-teal-900 px-2 py-0.5 rounded">7-Day Delta</span>
+                    <span class="text-[10px] bg-teal-950 text-teal-400 border border-teal-900 px-2 py-0.5 rounded">Dynamic Completion %</span>
                 </div>
                 <div class="h-48">
                     <canvas id="dailyProgressChart"></canvas>
                 </div>
             </div>
 
+            <!-- Overall Goals (DYNAMIC) -->
             <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl flex flex-col justify-between">
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Macro Goal Completion</h2>
@@ -99,55 +107,57 @@
                     <div class="space-y-2 text-xs">
                         <div class="flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-teal-500"></span>
-                            <span class="text-slate-400">Completed: <b class="text-white">74%</b></span>
+                            <span class="text-slate-400">Completed: <b class="text-white" id="macro-completed-text">0%</b></span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-slate-700"></span>
-                            <span class="text-slate-400">Remaining: <b class="text-white">26%</b></span>
+                            <span class="text-slate-400">Remaining: <b class="text-white" id="macro-remaining-text">100%</b></span>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Quick Stats (DYNAMIC) -->
             <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl grid grid-cols-2 gap-4">
                 <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
                     <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Current Streak</span>
                     <div>
-                        <div class="text-2xl font-bold text-white font-mono">18 Days</div>
-                        <span class="text-[10px] text-teal-400"><i class="fa-solid fa-arrow-trend-up"></i> +4 days vs last month</span>
+                        <div class="text-2xl font-bold text-white font-mono" id="stats-current-streak">0 Days</div>
+                        <span class="text-[10px] text-teal-400"><i class="fa-solid fa-fire"></i> Best current streak</span>
                     </div>
                 </div>
                 <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
                     <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Consistency Index</span>
                     <div>
-                        <div class="text-2xl font-bold text-teal-400 font-mono">91.4%</div>
-                        <span class="text-[10px] text-slate-400">Top 5% of historical data</span>
+                        <div class="text-2xl font-bold text-teal-400 font-mono" id="stats-consistency-index">0%</div>
+                        <span class="text-[10px] text-slate-400">Habit ticks ratio</span>
                     </div>
                 </div>
                 <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
                     <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Tasks Resolution</span>
                     <div>
-                        <div class="text-2xl font-bold text-white font-mono">42 / 48</div>
+                        <div class="text-2xl font-bold text-white font-mono" id="stats-task-throughput">0 / 0</div>
                         <span class="text-[10px] text-slate-400">Weekly task throughput</span>
                     </div>
                 </div>
                 <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
                     <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Focus Efficiency</span>
                     <div>
-                        <div class="text-2xl font-bold text-white font-mono">4.8 <span class="text-xs text-slate-500">hrs/day</span></div>
-                        <span class="text-[10px] text-amber-500"><i class="fa-solid fa-circle-exclamation"></i> Deep work alert</span>
+                        <div class="text-2xl font-bold text-white font-mono" id="stats-focus-efficiency">0%</div>
+                        <span class="text-[10px] text-amber-500"><i class="fa-solid fa-gauge"></i> Overall tactical load</span>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- ================= SECTION: ALARM & REMINDER SYSTEM ================= -->
         <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
             <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
                 <div>
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                         <i class="fa-solid fa-bell text-amber-500 animate-pulse"></i> Tactical Alarm & Reminder Hub
                     </h2>
-                    <p class="text-[11px] text-slate-500">Set alarms with preset synthesized pitches, custom audio files, and rhythmic vibration.</p>
+                    <p class="text-[11px] text-slate-500">Set alarms with preset tones, custom local files, and rhythmic vibration. (Auto-saved)</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-2 bg-slate-950/60 p-2 border border-slate-800 rounded-md w-full xl:w-auto">
@@ -156,6 +166,7 @@
                     <input type="time" id="alarm-time" 
                            class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white focus:outline-none focus:border-amber-500">
                     
+                    <!-- SOUND SELECTOR DROPDOWN -->
                     <select id="alarm-sound-type" onchange="handleSoundTypeChange()" class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white focus:outline-none focus:border-amber-500 cursor-pointer">
                         <option value="classic">🔊 Classic Beep</option>
                         <option value="siren">🚨 Digital Siren</option>
@@ -163,6 +174,7 @@
                         <option value="custom">📁 Upload Local File...</option>
                     </select>
 
+                    <!-- LOCAL FILE UPLOADER -->
                     <div id="local-file-container" class="hidden">
                         <input type="file" id="alarm-file-input" accept="audio/*" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer max-w-[160px]">
                     </div>
@@ -174,6 +186,7 @@
                 </div>
             </div>
 
+            <!-- Global Audio & Vibration Stop Banner -->
             <div id="alarm-trigger-banner" class="hidden mb-3 p-3 bg-red-950/80 border border-red-800 rounded-md flex justify-between items-center animate-bounce">
                 <span class="text-xs font-bold text-red-200 font-mono flex items-center gap-2">
                     <i class="fa-solid fa-triangle-exclamation text-red-500 animate-ping"></i> 
@@ -185,14 +198,16 @@
             </div>
 
             <div id="alarm-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                </div>
+                <!-- Alarm items append dynamically -->
+            </div>
         </section>
 
+        <!-- ================= MIDDLE SECTION: HABIT GRID (30 DAYS) ================= -->
         <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl overflow-x-auto">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 min-w-[1240px]">
                 <div>
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Habit Execution Matrix</h2>
-                    <p class="text-[11px] text-slate-500">Granular tracking across a 30-day continuous cycle.</p>
+                    <p class="text-[11px] text-slate-500">Granular tracking across a 30-day continuous cycle. (Auto-saved)</p>
                 </div>
                 
                 <div class="flex items-center gap-2 bg-slate-950/60 p-1.5 border border-slate-800 rounded-md">
@@ -219,92 +234,20 @@
                 </div>
 
                 <div id="habit-rows-container" class="divide-y divide-slate-800/60 text-xs">
-                    <div class="grid grid-cols-[240px_1fr] items-center py-2.5 hover:bg-slate-900/40 group">
-                        <div class="font-medium text-slate-300 pl-2 flex items-center justify-between pr-4">
-                            <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-dumbbell text-slate-500 w-4"></i> Gym / Resistance Training
-                            </span>
-                            <button onclick="this.closest('.grid').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150 p-1">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                        <div class="grid grid-cols-30 gap-1 justify-items-center">
-                            <script>
-                                for(let i=1; i<=30; i++) {
-                                    let checked = [1,2,3,5,6,7,8,10].includes(i) ? 'checked' : '';
-                                    document.write(`<input type="checkbox" class="matrix-checkbox" ${checked}>`);
-                                }
-                            </script>
-                        </div>
-                    </div>
+                    <!-- Habit rows render from localStorage -->
                 </div>
             </div>
         </section>
 
+        <!-- ================= WEEKLY PLANNER SECTION ================= -->
         <section class="space-y-3">
-            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Weekly Tactical Matrix (7-Day Micro-Allocations)</h2>
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Weekly Tactical Matrix (7-Day Micro-Allocations - Auto-saved)</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-7 gap-4" id="weekly-planner-container">
-                <script>
-                    const daysData = [
-                        { id: "mon", name: "Monday", tasks: ["Q3 Roadmap Review", "Deploy server node v2"] },
-                        { id: "tue", name: "Tuesday", tasks: ["Sync with design crew", "Refactor auth middleware"] },
-                        { id: "wed", name: "Wednesday", tasks: ["Mid-week architecture evaluation"] },
-                        { id: "thu", name: "Thursday", tasks: ["Technical writing sprint"] },
-                        { id: "fri", name: "Friday", tasks: ["Sprint retrospective", "Deploy hotfixes"] },
-                        { id: "sat", name: "Saturday", tasks: ["Deep rest / Decompress"] },
-                        { id: "sun", name: "Sunday", tasks: ["Next-week scheduling"] }
-                    ];
-
-                    daysData.forEach((day) => {
-                        document.write(`
-                            <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-3 flex flex-col justify-between shadow-lg min-h-[260px]" id="card-${day.id}">
-                                <div>
-                                    <div class="flex justify-between items-center mb-3">
-                                        <span class="text-xs font-bold text-white tracking-wide">${day.name}</span>
-                                        <div class="relative w-8 h-8 flex items-center justify-center">
-                                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                                <path class="text-slate-800" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                                <path class="text-teal-400 progress-ring" id="ring-${day.id}" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                            </svg>
-                                            <div class="absolute text-[8px] font-mono text-slate-300 font-bold" id="text-${day.id}">0%</div>
-                                        </div>
-                                    </div>
-                                    <ul class="space-y-2 text-[11px] text-slate-400 list-container" id="list-${day.id}">
-                        `);
-
-                        day.tasks.forEach((task, idx) => {
-                            let checkState = idx === 0 ? 'checked' : '';
-                            let lineThrough = checkState ? 'line-through text-slate-600' : '';
-                            document.write(`
-                                <li class="flex items-start justify-between group/item gap-1">
-                                    <label class="flex items-start gap-2 cursor-pointer flex-1">
-                                        <input type="checkbox" ${checkState} onchange="updateDayMetrics('${day.id}')" class="mt-0.5 w-3.5 h-3.5 rounded border-slate-800 bg-slate-900 accent-teal-600 task-checkbox cursor-pointer">
-                                        <span class="label-text ${lineThrough} leading-tight">${task}</span>
-                                    </label>
-                                    <button onclick="removeTacticalTask(this, '${day.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs">×</button>
-                                </li>
-                            `);
-                        });
-
-                        document.write(`
-                                    </ul>
-                                </div>
-                                <div class="mt-4 pt-2 border-t border-slate-900 space-y-2">
-                                    <div class="flex items-center gap-1.5 bg-slate-950/40 p-1 border border-slate-800 rounded">
-                                        <input type="text" placeholder="Add task..." onkeypress="handleTaskKeyPress(event, '${day.id}')" id="input-${day.id}" class="bg-transparent text-[10px] px-1 py-0.5 text-white placeholder-slate-600 focus:outline-none w-full">
-                                        <button onclick="addTacticalTask('${day.id}')" class="text-teal-500 hover:text-teal-400 px-1 font-bold"><i class="fa-solid fa-plus text-[10px]"></i></button>
-                                    </div>
-                                    <div class="flex justify-between items-center text-[9px] font-mono text-slate-500">
-                                        <span>TSK_COUNT: <b id="count-${day.id}">0</b></span>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    });
-                </script>
+                <!-- Days columns rendered dynamically via JS -->
             </div>
         </section>
 
+        <!-- ================= BOTTOM SECTION: DYNAMIC CORRELATION ================= -->
         <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
             <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Biometric Recovery & Performance Correlation</h2>
             <div class="h-56">
@@ -318,25 +261,51 @@
         tailwind.config = { theme: { extend: { gridTemplateColumns: { '30': 'repeat(30, minmax(0, 1fr))' } } } }
     </script>
 
+    <!-- Core Persistence & Business Logics Architecture -->
     <script>
-        // --- DATA STORE FOR ALARMS ---
-        let registeredAlarms = [
+        // Global variables for Chart references
+        let dailyProgressChartObj = null;
+        let overallGoalsChartObj = null;
+        let biometricLineChartObj = null;
+
+        // --- PERSISTENT DATA STORES ---
+        let registeredAlarms = JSON.parse(localStorage.getItem('nexus_alarms')) || [
             { id: 'default-1', title: 'Gym Session', time: '06:00', enabled: true, soundType: 'classic', customAudioData: null, triggeredToday: false }
         ];
+
+        let habitMatrixStore = JSON.parse(localStorage.getItem('nexus_habits')) || [
+            { id: 'h-1', name: 'Gym / Resistance Training', icon: 'fa-dumbbell', checks: [true, true, true, false, true, true, true, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false] }
+        ];
+
+        let weeklyPlannerStore = JSON.parse(localStorage.getItem('nexus_weekly')) || {
+            mon: { name: "Monday", tasks: [{text: "Q3 Roadmap Review", done: true}, {text: "Deploy server node v2", done: false}] },
+            tue: { name: "Tuesday", tasks: [{text: "Sync with design crew", done: true}, {text: "Refactor auth middleware", done: false}] },
+            wed: { name: "Wednesday", tasks: [{text: "Mid-week architecture evaluation", done: false}] },
+            thu: { name: "Thursday", tasks: [{text: "Technical writing sprint", done: false}] },
+            fri: { name: "Friday", tasks: [{text: "Sprint retrospective", done: false}, {text: "Deploy hotfixes", done: false}] },
+            sat: { name: "Saturday", tasks: [{text: "Deep rest / Decompress", done: false}] },
+            sun: { name: "Sunday", tasks: [{text: "Next-week scheduling", done: false}] }
+        };
+
         let audioInterval = null;
         let vibrateInterval = null;
         let audioCtx = null;
-        let customAudioElement = null; // To play uploaded user local file
+        let customAudioElement = null;
 
-        // --- AUTOMATIC DATE ENGINE ---
-        function runDynamicClock() {
-            const dateElement = document.getElementById('current-date');
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' };
-            dateElement.innerText = now.toLocaleDateString('en-US', options).toUpperCase();
+        function syncData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
         }
 
-        // Dropdown toggle logic for local file uploader UI
+        // --- AUTOMATIC CLOCK ENGINE ---
+        function runDynamicClock() {
+            const dateElement = document.getElementById('current-date');
+            if(dateElement) {
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' };
+                dateElement.innerText = now.toLocaleDateString('en-US', options).toUpperCase();
+            }
+        }
+
         function handleSoundTypeChange() {
             const soundSelect = document.getElementById('alarm-sound-type');
             const fileContainer = document.getElementById('local-file-container');
@@ -347,17 +316,15 @@
             }
         }
 
-        // --- ALARM NOTIFICATION ENGINE (PITCH ENGINE + LOCAL MP3 PLAYER) ---
+        // --- AUDIO ENGINE CORES ---
         function startAlarmNotification(alarm) {
-            if (audioInterval || customAudioElement) return; // Already running
+            if (audioInterval || customAudioElement) return;
 
             if (alarm.soundType === 'custom' && alarm.customAudioData) {
-                // Play uploaded custom local audio file
                 customAudioElement = new Audio(alarm.customAudioData);
                 customAudioElement.loop = true;
-                customAudioElement.play().catch(err => console.log("Audio play gesture block:", err));
+                customAudioElement.play().catch(err => console.log("Audio gesture block:", err));
             } else {
-                // Play built-in synthesized audio frequency oscillator
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 audioInterval = setInterval(() => {
                     if(!audioCtx) return;
@@ -388,35 +355,21 @@
                 }, alarm.soundType === 'siren' ? 350 : 600);
             }
 
-            // --- MOBILE VIBRATION MODULE ---
             if (navigator.vibrate) {
                 navigator.vibrate([400, 200]); 
-                vibrateInterval = setInterval(() => {
-                    navigator.vibrate([400, 200]);
-                }, 600);
+                vibrateInterval = setInterval(() => { navigator.vibrate([400, 200]); }, 600);
             }
         }
 
         function stopActiveAlarmSound() {
-            // Stop synthesized timers
             if (audioInterval) { clearInterval(audioInterval); audioInterval = null; }
             if (audioCtx) { audioCtx.close(); audioCtx = null; }
-            
-            // Stop custom file audio
-            if (customAudioElement) {
-                customAudioElement.pause();
-                customAudioElement.currentTime = 0;
-                customAudioElement = null;
-            }
-
-            // Stop vibration
+            if (customAudioElement) { customAudioElement.pause(); customAudioElement.currentTime = 0; customAudioElement = null; }
             if (vibrateInterval) { clearInterval(vibrateInterval); vibrateInterval = null; }
             if (navigator.vibrate) { navigator.vibrate(0); }
-            
             document.getElementById('alarm-trigger-banner').classList.add('hidden');
         }
 
-        // --- REALTIME ALARM ENGINE ENGINE ---
         function checkAlarmsEngine() {
             const now = new Date();
             const currentTimeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -446,32 +399,22 @@
                 const displayHours = hours % 12 || 12;
                 const timeFormatted = `${String(displayHours).padStart(2, '0')}:${minutes} ${suffix}`;
                 
-                let icon = "🔊";
-                if(alarm.soundType === 'siren') icon = "🚨";
-                if(alarm.soundType === 'chime') icon = "✨";
-                if(alarm.soundType === 'custom') icon = "📁";
-
+                let icon = alarm.soundType === 'siren' ? "🚨" : alarm.soundType === 'chime' ? "✨" : alarm.soundType === 'custom' ? "📁" : "🔊";
                 let soundLabel = alarm.soundType === 'custom' ? 'Local Audio' : alarm.soundType;
 
                 const alarmNode = document.createElement('div');
                 alarmNode.className = 'bg-slate-900/60 border border-slate-800 p-3 rounded-md flex items-center justify-between group';
                 alarmNode.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <div class="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-amber-400 text-xs font-mono">
-                            ${icon}
-                        </div>
+                        <div class="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-amber-400 text-xs font-mono">${icon}</div>
                         <div>
                             <div class="text-xs font-bold text-slate-200">${alarm.title}</div>
                             <div class="text-[10px] font-mono text-slate-400">${timeFormatted} | ${soundLabel}</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="checkbox" ${alarm.enabled ? 'checked' : ''} 
-                               onchange="toggleAlarmState('${alarm.id}')" 
-                               class="w-8 h-4 bg-slate-800 checked:bg-amber-500 rounded-full cursor-pointer appearance-none relative before:content-[''] before:absolute before:h-3 before:w-3 before:bg-slate-400 checked:before:bg-white before:rounded-full before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform">
-                        <button onclick="removeAlarmRecord('${alarm.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                        </button>
+                        <input type="checkbox" ${alarm.enabled ? 'checked' : ''} onchange="toggleAlarmState('${alarm.id}')" class="w-8 h-4 bg-slate-800 checked:bg-amber-500 rounded-full cursor-pointer appearance-none relative before:content-[''] before:absolute before:h-3 before:w-3 before:bg-slate-400 checked:before:bg-white before:rounded-full before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform">
+                        <button onclick="removeAlarmRecord('${alarm.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
                     </div>
                 `;
                 container.appendChild(alarmNode);
@@ -488,74 +431,243 @@
             const timeVal = timeField.value;
             const soundType = soundSelect.value;
             
-            if (!timeVal) { alert('Please select a valid activation time.'); return; }
+            if (!timeVal) { alert('Please select a valid time.'); return; }
 
             if (soundType === 'custom') {
-                // If user selected custom local file, extract data stream using FileReader API
-                if (fileInput.files.length === 0) {
-                    alert('Please select an audio file from your device first.');
-                    return;
-                }
+                if (fileInput.files.length === 0) { alert('Please select an audio file.'); return; }
                 const file = fileInput.files[0];
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    saveAlarmObj(title, timeVal, soundType, e.target.result);
-                };
+                reader.onload = function(e) { saveAlarmObj(title, timeVal, soundType, e.target.result); };
                 reader.readAsDataURL(file);
             } else {
                 saveAlarmObj(title, timeVal, soundType, null);
             }
 
-            // Cleanup fields
             titleField.value = ''; timeField.value = ''; fileInput.value = '';
             soundSelect.value = 'classic'; handleSoundTypeChange();
         }
 
         function saveAlarmObj(title, time, soundType, base64Audio) {
-            registeredAlarms.push({
-                id: 'alarm-' + Date.now(),
-                title: title,
-                time: time,
-                enabled: true,
-                soundType: soundType,
-                customAudioData: base64Audio,
-                triggeredToday: false
+            registeredAlarms.push({ id: 'alarm-' + Date.now(), title: title, time: time, enabled: true, soundType: soundType, customAudioData: base64Audio, triggeredToday: false });
+            syncData('nexus_alarms', registeredAlarms);
+            renderAlarmsList();
+        }
+
+        // --- HABIT ENGINES ---
+        function renderHabitMatrix() {
+            const container = document.getElementById('habit-rows-container');
+            container.innerHTML = '';
+
+            habitMatrixStore.forEach((habit, hIdx) => {
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-[240px_1fr] items-center py-2.5 hover:bg-slate-900/40 group';
+                
+                let checkBoxesHTML = '';
+                for(let i = 0; i < 30; i++) {
+                    let isChecked = habit.checks[i] ? 'checked' : '';
+                    checkBoxHTML = `<input type="checkbox" ${isChecked} onchange="toggleHabitCheck(${hIdx}, ${i})" class="matrix-checkbox">`;
+                    checkBoxesHTML += `<div class="grid justify-items-center">${checkBoxHTML}</div>`;
+                }
+
+                row.innerHTML = `
+                    <div class="font-medium text-slate-300 pl-2 flex items-center justify-between pr-4">
+                        <span class="flex items-center gap-2"><i class="fa-solid ${habit.icon || 'fa-star'} text-slate-500 w-4"></i> ${habit.name}</span>
+                        <button onclick="removeHabitRow(${hIdx})" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                    <div class="grid grid-cols-30 gap-1">${checkBoxesHTML}</div>
+                `;
+                container.appendChild(row);
             });
-            renderAlarmsList();
+            // Habit calculations need to refresh anytime metrics change
+            calculateHabitAnalytics();
         }
 
-        function toggleAlarmState(id) {
-            const alarm = registeredAlarms.find(a => a.id === id);
-            if(alarm) alarm.enabled = !alarm.enabled;
+        function addNewHabitRow() {
+            const inputField = document.getElementById('habit-input');
+            const habitName = inputField.value.trim();
+            if (habitName === '') return;
+
+            habitMatrixStore.push({ id: 'h-' + Date.now(), name: habitName, icon: 'fa-star', checks: new Array(30).fill(false) });
+            syncData('nexus_habits', habitMatrixStore);
+            renderHabitMatrix();
+            inputField.value = '';
         }
 
-        function removeAlarmRecord(id) {
-            registeredAlarms = registeredAlarms.filter(a => a.id !== id);
-            renderAlarmsList();
+        function toggleHabitCheck(habitIdx, dayIdx) {
+            habitMatrixStore[habitIdx].checks[dayIdx] = !habitMatrixStore[habitIdx].checks[dayIdx];
+            syncData('nexus_habits', habitMatrixStore);
+            calculateHabitAnalytics();
         }
 
-        // Unlock browser security audio policy
-        document.addEventListener('click', () => {
-            if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
-        });
+        function removeHabitRow(idx) {
+            habitMatrixStore.splice(idx, 1);
+            syncData('nexus_habits', habitMatrixStore);
+            renderHabitMatrix();
+        }
 
-        // --- WEEKLY PLANNER AND TASK ACTIONS PROTOCOLS ---
-        function updateDayMetrics(dayId) {
-            const list = document.getElementById(`list-${dayId}`);
-            const totalTasks = list.querySelectorAll('li').length;
-            const checkedTasks = list.querySelectorAll('.task-checkbox:checked').length;
+        // --- NEW CALCULATED MATRIX FOR HABIT ANALYTICS ---
+        function calculateHabitAnalytics() {
+            if(habitMatrixStore.length === 0) {
+                document.getElementById('stats-consistency-index').innerText = "0%";
+                document.getElementById('stats-current-streak').innerText = "0 Days";
+                return;
+            }
+
+            let totalPossibleSlots = habitMatrixStore.length * 30;
+            let totalCheckedSlots = 0;
+
+            habitMatrixStore.forEach(h => {
+                h.checks.forEach(c => { if(c) totalCheckedSlots++; });
+            });
+
+            // Consistency Index Math Transformation
+            let consistencyPct = Math.round((totalCheckedSlots / totalPossibleSlots) * 100);
+            document.getElementById('stats-consistency-index').innerText = `${consistencyPct}%`;
+
+            // Max Streak Sweep Logic across 30 days
+            let globalMaxStreak = 0;
+            let currentDayStreak = 0;
+
+            for(let d=0; d<30; d++) {
+                let allHabitsDoneForDay = true;
+                habitMatrixStore.forEach(h => { if(!h.checks[d]) allHabitsDoneForDay = false; });
+
+                if(allHabitsDoneForDay) {
+                    currentDayStreak++;
+                    if(currentDayStreak > globalMaxStreak) globalMaxStreak = currentDayStreak;
+                } else {
+                    currentDayStreak = 0;
+                }
+            }
+            document.getElementById('stats-current-streak').innerText = `${globalMaxStreak} Days`;
+            
+            // Re-sync bottom line chart maps when analytics updates
+            syncChartsWithPlannerData();
+        }
+
+        // --- REALTIME CENTRAL ANALYTICS SYNC ENGINE ---
+        function syncChartsWithPlannerData() {
+            const keys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+            let totalWeeklyTasks = 0;
+            let totalWeeklyCompleted = 0;
+            let dailyPercentages = [];
+
+            keys.forEach(dayId => {
+                const dayTasks = weeklyPlannerStore[dayId].tasks;
+                const total = dayTasks.length;
+                const done = dayTasks.filter(t => t.done).length;
+                
+                totalWeeklyTasks += total;
+                totalWeeklyCompleted += done;
+
+                let dayPct = total > 0 ? Math.round((done / total) * 100) : 0;
+                dailyPercentages.push(dayPct);
+            });
+
+            // Calculations
+            let macroCompletePct = totalWeeklyTasks > 0 ? Math.round((totalWeeklyCompleted / totalWeeklyTasks) * 100) : 0;
+            let macroRemainingPct = 100 - macroCompletePct;
+
+            // DOM Node adjustments
+            document.getElementById('macro-completed-text').innerText = `${macroCompletePct}%`;
+            document.getElementById('macro-remaining-text').innerText = `${macroRemainingPct}%`;
+            document.getElementById('stats-task-throughput').innerText = `${totalWeeklyCompleted} / ${totalWeeklyTasks}`;
+            document.getElementById('stats-focus-efficiency').innerText = `${macroCompletePct}%`;
+
+            // Daily Progress Bar Chart Feed updates
+            if (dailyProgressChartObj) {
+                dailyProgressChartObj.data.datasets[0].data = dailyPercentages;
+                dailyProgressChartObj.update();
+            }
+
+            // Macro Goal Doughnut Chart Feed updates
+            if (overallGoalsChartObj) {
+                overallGoalsChartObj.data.datasets[0].data = [macroCompletePct, macroRemainingPct];
+                overallGoalsChartObj.update();
+            }
+
+            // --- BOTTOM BIOMETRIC/PERFORMANCE LINE CHART SYNC ENGINE ---
+            if (biometricLineChartObj) {
+                // Dataset 0 gets daily task completion metrics
+                biometricLineChartObj.data.datasets[0].data = dailyPercentages;
+
+                // Dataset 1 grabs standard habit check matrix map distributions across past 7 days tracking frames
+                let dynamicHabitTrend = [];
+                for(let i=0; i<7; i++) {
+                    let dayTicks = 0;
+                    habitMatrixStore.forEach(h => { if(h.checks[i]) dayTicks++; });
+                    let dayPct = habitMatrixStore.length > 0 ? Math.round((dayTicks / habitMatrixStore.length) * 100) : 0;
+                    dynamicHabitTrend.push(dayPct);
+                }
+                biometricLineChartObj.data.datasets[1].data = dynamicHabitTrend;
+                biometricLineChartObj.update();
+            }
+        }
+
+        // --- WEEKLY TACTICAL PLANNER MATRIX ENGINE ---
+        function renderWeeklyPlanner() {
+            const container = document.getElementById('weekly-planner-container');
+            container.innerHTML = '';
+
+            Object.keys(weeklyPlannerStore).forEach(dayId => {
+                const dayData = weeklyPlannerStore[dayId];
+                const dayCard = document.createElement('div');
+                dayCard.className = "bg-[#0f1418] border border-slate-800/80 rounded-lg p-3 flex flex-col justify-between shadow-lg min-h-[260px]";
+                
+                let listItemsHTML = '';
+                dayData.tasks.forEach((task, tIdx) => {
+                    let checkState = task.done ? 'checked' : '';
+                    let lineThrough = task.done ? 'line-through text-slate-600' : '';
+                    listItemsHTML += `
+                        <li class="flex items-start justify-between group/item gap-1">
+                            <label class="flex items-start gap-2 cursor-pointer flex-1">
+                                <input type="checkbox" ${checkState} onchange="toggleTaskDone('${dayId}', ${tIdx})" class="mt-0.5 w-3.5 h-3.5 rounded border-slate-800 bg-slate-900 accent-teal-600 task-checkbox cursor-pointer">
+                                <span class="label-text ${lineThrough} leading-tight">${task.text}</span>
+                            </label>
+                            <button onclick="removeTacticalTask('${dayId}', ${tIdx})" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs">×</button>
+                        </li>
+                    `;
+                });
+
+                dayCard.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-white tracking-wide">${dayData.name}</span>
+                            <div class="relative w-8 h-8 flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                    <path class="text-slate-800" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-teal-400 progress-ring" id="ring-${dayId}" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <div class="absolute text-[8px] font-mono text-slate-300 font-bold" id="text-${dayId}">0%</div>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-[11px] text-slate-400" id="list-${dayId}">${listItemsHTML}</ul>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-slate-900 space-y-2">
+                        <div class="flex items-center gap-1.5 bg-slate-950/40 p-1 border border-slate-800 rounded">
+                            <input type="text" placeholder="Add task..." onkeypress="handleTaskKeyPress(event, '${dayId}')" id="input-${dayId}" class="bg-transparent text-[10px] px-1 py-0.5 text-white placeholder-slate-600 focus:outline-none w-full">
+                            <button onclick="addTacticalTask('${dayId}')" class="text-teal-500 hover:text-teal-400 px-1 font-bold"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                        </div>
+                        <div class="flex justify-between items-center text-[9px] font-mono text-slate-500">
+                            <span>TSK_COUNT: <b id="count-${dayId}">0</b></span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(dayCard);
+                updateDayMetricsUI(dayId);
+            });
+            syncChartsWithPlannerData();
+        }
+
+        function updateDayMetricsUI(dayId) {
+            const tasks = weeklyPlannerStore[dayId].tasks;
+            const totalTasks = tasks.length;
+            const checkedTasks = tasks.filter(t => t.done).length;
             const percentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
             
             document.getElementById(`text-${dayId}`).innerText = `${percentage}%`;
             document.getElementById(`ring-${dayId}`).setAttribute('stroke-dasharray', `${percentage}, 100`);
             document.getElementById(`count-${dayId}`).innerText = totalTasks;
-
-            list.querySelectorAll('li').forEach(item => {
-                const cb = item.querySelector('.task-checkbox');
-                const txt = item.querySelector('.label-text');
-                if(cb.checked) txt.classList.add('line-through', 'text-slate-600');
-                else txt.classList.remove('line-through', 'text-slate-600');
-            });
         }
 
         function handleTaskKeyPress(event, dayId) { if (event.key === 'Enter') addTacticalTask(dayId); }
@@ -565,82 +677,93 @@
             const taskText = input.value.trim();
             if(taskText === "") return;
 
-            const listContainer = document.getElementById(`list-${dayId}`);
-            const li = document.createElement('li');
-            li.className = "flex items-start justify-between group/item gap-1";
-            li.innerHTML = `
-                <label class="flex items-start gap-2 cursor-pointer flex-1">
-                    <input type="checkbox" onchange="updateDayMetrics('${dayId}')" class="mt-0.5 w-3.5 h-3.5 rounded border-slate-800 bg-slate-900 accent-teal-600 task-checkbox cursor-pointer">
-                    <span class="label-text leading-tight">${taskText}</span>
-                </label>
-                <button onclick="removeTacticalTask(this, '${dayId}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs">×</button>
-            `;
-            listContainer.appendChild(li);
-            input.value = ""; 
-            updateDayMetrics(dayId);
+            weeklyPlannerStore[dayId].tasks.push({text: taskText, done: false});
+            syncData('nexus_weekly', weeklyPlannerStore);
+            renderWeeklyPlanner();
         }
 
-        function removeTacticalTask(btn, dayId) { btn.closest('li').remove(); updateDayMetrics(dayId); }
+        function toggleTaskDone(dayId, taskIdx) {
+            weeklyPlannerStore[dayId].tasks[taskIdx].done = !weeklyPlannerStore[dayId].tasks[taskIdx].done;
+            syncData('nexus_weekly', weeklyPlannerStore);
+            renderWeeklyPlanner();
+        }
 
+        function removeTacticalTask(dayId, taskIdx) {
+            weeklyPlannerStore[dayId].tasks.splice(taskIdx, 1);
+            syncData('nexus_weekly', weeklyPlannerStore);
+            renderWeeklyPlanner();
+        }
+
+        function toggleAlarmState(id) {
+            const alarm = registeredAlarms.find(a => a.id === id);
+            if(alarm) { alarm.enabled = !alarm.enabled; syncData('nexus_alarms', registeredAlarms); }
+        }
+
+        function removeAlarmRecord(id) {
+            registeredAlarms = registeredAlarms.filter(a => a.id !== id);
+            syncData('nexus_alarms', registeredAlarms);
+            renderAlarmsList();
+        }
+
+        // --- LIFECYCLE RUNTIME ---
         window.addEventListener('DOMContentLoaded', () => {
             runDynamicClock();
             renderAlarmsList();
-            ['mon','tue','wed','thu','fri','sat','sun'].forEach(id => updateDayMetrics(id));
+            initializeCharts(); 
+            renderHabitMatrix();
+            renderWeeklyPlanner();
+            
             setInterval(checkAlarmsEngine, 1000);
         });
 
-        function addNewHabitRow() {
-            const inputField = document.getElementById('habit-input');
-            const habitName = inputField.value.trim();
-            if (habitName === '') return;
-
-            const container = document.getElementById('habit-rows-container');
-            const rowWrapper = document.createElement('div');
-            rowWrapper.className = 'grid grid-cols-[240px_1fr] items-center py-2.5 hover:bg-slate-900/40 group';
-            rowWrapper.innerHTML = `
-                <div class="font-medium text-slate-300 pl-2 flex items-center justify-between pr-4">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-star text-teal-500 w-4"></i> ${habitName}</span>
-                    <button onclick="this.closest('.grid').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-                <div class="grid grid-cols-30 gap-1 justify-items-center"></div>
-            `;
-            const matrix = rowWrapper.querySelector('.grid-cols-30');
-            for (let i = 1; i <= 30; i++) {
-                matrix.innerHTML += `<input type="checkbox" class="matrix-checkbox">`;
-            }
-            container.appendChild(rowWrapper);
-            inputField.value = '';
-        }
+        document.addEventListener('click', () => {
+            if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
+        });
     </script>
 
+    <!-- Analytics Charts Injections Framework -->
     <script>
         const chartTicksConfig = { color: '#64748b', font: { size: 10, family: 'Courier New' } };
-        new Chart(document.getElementById('dailyProgressChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{ data: [14, 19, 12, 16, 22, 9, 11], backgroundColor: 'rgba(20, 184, 166, 0.75)', borderColor: '#14b8a6', borderWidth: 1.5, borderRadius: 4, barThickness: 16 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: chartTicksConfig }, y: { grid: { color: 'rgba(30, 41, 59, 0.3)' }, ticks: chartTicksConfig } } }
-        });
+        
+        function initializeCharts() {
+            // Daily Progress Chart Engine
+            dailyProgressChartObj = new Chart(document.getElementById('dailyProgressChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{ data: [0, 0, 0, 0, 0, 0, 0], backgroundColor: 'rgba(20, 184, 166, 0.75)', borderColor: '#14b8a6', borderWidth: 1.5, borderRadius: 4, barThickness: 16 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: chartTicksConfig }, y: { min: 0, max: 100, grid: { color: 'rgba(30, 41, 59, 0.3)' }, ticks: chartTicksConfig } } }
+            });
 
-        new Chart(document.getElementById('overallGoalsChart').getContext('2d'), {
-            type: 'doughnut',
-            data: { datasets: [{ data: [74, 26], backgroundColor: ['#0d9488', '#1e293b'], borderWidth: 0 }] },
-            options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false } } }
-        });
+            // Macro Goal Doughnut Initialization
+            overallGoalsChartObj = new Chart(document.getElementById('overallGoalsChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { datasets: [{ data: [0, 100], backgroundColor: ['#0d9488', '#1e293b'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false } } }
+            });
 
-        new Chart(document.getElementById('biometricLineChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['Day 01', 'Day 02', 'Day 03', 'Day 04', 'Day 05', 'Day 06', 'Day 07'],
-                datasets: [
-                    { data: [7.2, 6.8, 7.5, 8.0, 6.2, 5.9, 7.8], borderColor: '#14b8a6', backgroundColor: 'transparent', borderWidth: 2, tension: 0.35 },
-                    { data: [8.5, 7.9, 9.0, 8.8, 7.0, 6.5, 8.9], borderColor: '#475569', backgroundColor: 'transparent', borderWidth: 2, borderDash: [4, 4], tension: 0.2 }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: chartTicksConfig }, y: { grid: { color: 'rgba(30, 41, 59, 0.3)' }, ticks: chartTicksConfig } } }
-        });
+            // DYNAMICALLY LINKED: Line Correlation Graph Matrix (Task Execution Index vs Habit Consistency Mapping)
+            biometricLineChartObj = new Chart(document.getElementById('biometricLineChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        { label: 'Task Completion %', data: [0, 0, 0, 0, 0, 0, 0], borderColor: '#14b8a6', backgroundColor: 'transparent', borderWidth: 2, tension: 0.35 },
+                        { label: 'Habit Matrix Sync %', data: [0, 0, 0, 0, 0, 0, 0], borderColor: '#475569', backgroundColor: 'transparent', borderWidth: 2, borderDash: [4, 4], tension: 0.2 }
+                    ]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { grid: { display: false }, ticks: chartTicksConfig }, 
+                        y: { min: 0, max: 100, grid: { color: 'rgba(30, 41, 59, 0.3)' }, ticks: chartTicksConfig } 
+                    } 
+                }
+            });
+        }
     </script>
 </body>
 </html>

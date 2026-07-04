@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Productivity Dashboard</title>
+    <!-- Tailwind CSS for Grid structure and base utility styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for advanced visual rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for clean dashboard iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #0b0f11;
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        /* Custom scrollbar to match deep teal/slate theme */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f1519;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #14b8a6;
+        }
+        /* Custom Checkbox styling for the dense 30-day matrix */
+        .matrix-checkbox {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1px solid #1e293b;
+            border-radius: 3px;
+            background-color: #0f1519;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-block;
+            position: relative;
+        }
+        .matrix-checkbox:checked {
+            background-color: #0d9488;
+            border-color: #14b8a6;
+            box-shadow: 0 0 8px rgba(20, 184, 166, 0.3);
+        }
+        .matrix-checkbox:checked::after {
+            content: '\2713';
+            position: absolute;
+            color: #ffffff;
+            font-size: 11px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="p-6 opacity-95">
+
+    <div class="max-w-[1700px] mx-auto space-y-6">
+        
+        <!-- ================= HEADER REGION (WITH AUTOMATIC DATE ENGINE) ================= -->
+        <header class="flex justify-between items-center border-b border-teal-950/40 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                    <i class="fa-solid flex-none fa-chart-line text-teal-400"></i>
+                    NEXUS // PERFORMANCE DASHBOARD
+                </h1>
+                <p class="text-xs text-slate-400 tracking-wider uppercase mt-1">Metrics, Habit Matrix & Tactical Weekly Planner</p>
+            </div>
+            <div class="text-right text-xs font-mono text-slate-400 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded">
+                <span class="text-teal-400">SYS_STATUS:</span> OPTIMAL // <span id="current-date" class="text-white font-bold">LOADING...</span>
+            </div>
+        </header>
+
+        <!-- ================= TOP SECTION: ANALYTICS ================= -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Daily Progress (Bar Chart) -->
+            <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Daily Execution Volume</h2>
+                    <span class="text-[10px] bg-teal-950 text-teal-400 border border-teal-900 px-2 py-0.5 rounded">7-Day Delta</span>
+                </div>
+                <div class="h-48">
+                    <canvas id="dailyProgressChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Overall Goals (Doughnut Chart) -->
+            <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Macro Goal Completion</h2>
+                    <span class="text-[10px] bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded">Target: 85%</span>
+                </div>
+                <div class="flex items-center justify-around h-44">
+                    <div class="w-36 h-36 relative">
+                        <canvas id="overallGoalsChart"></canvas>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+                            <span class="text-slate-400">Completed: <b class="text-white">74%</b></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-slate-700"></span>
+                            <span class="text-slate-400">Remaining: <b class="text-white">26%</b></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Readout Panel -->
+            <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl grid grid-cols-2 gap-4">
+                <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
+                    <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Current Streak</span>
+                    <div>
+                        <div class="text-2xl font-bold text-white font-mono">18 Days</div>
+                        <span class="text-[10px] text-teal-400"><i class="fa-solid fa-arrow-trend-up"></i> +4 days vs last month</span>
+                    </div>
+                </div>
+                <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
+                    <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Consistency Index</span>
+                    <div>
+                        <div class="text-2xl font-bold text-teal-400 font-mono">91.4%</div>
+                        <span class="text-[10px] text-slate-400">Top 5% of historical data</span>
+                    </div>
+                </div>
+                <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
+                    <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Tasks Resolution</span>
+                    <div>
+                        <div class="text-2xl font-bold text-white font-mono">42 / 48</div>
+                        <span class="text-[10px] text-slate-400">Weekly task throughput</span>
+                    </div>
+                </div>
+                <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
+                    <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Focus Efficiency</span>
+                    <div>
+                        <div class="text-2xl font-bold text-white font-mono">4.8 <span class="text-xs text-slate-500">hrs/day</span></div>
+                        <span class="text-[10px] text-amber-500"><i class="fa-solid fa-circle-exclamation"></i> Deep work alert</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION: ALARM & REMINDER SYSTEM ================= -->
+        <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-bell text-amber-500 animate-pulse"></i> Tactical Alarm & Reminder Hub
+                    </h2>
+                    <p class="text-[11px] text-slate-500">Set time triggers for critical daily routines and matrix milestones.</p>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2 bg-slate-950/60 p-1.5 border border-slate-800 rounded-md">
+                    <input type="text" id="alarm-title" placeholder="Alarm Title (e.g., Coding Time)" 
+                           class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 w-48">
+                    <input type="time" id="alarm-time" 
+                           class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white focus:outline-none focus:border-amber-500">
+                    <button onclick="createNewAlarm()" 
+                            class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-4 py-1.5 rounded transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock-numeral text-[10px]"></i> Create Trigger
+                    </button>
+                </div>
+            </div>
+
+            <div id="alarm-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="bg-slate-900/60 border border-slate-800 p-3 rounded-md flex items-center justify-between group">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-amber-400">
+                            <i class="fa-solid fa-dumbbell"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-200">Gym Session</div>
+                            <div class="text-[11px] font-mono text-slate-400">06:00 AM</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" checked class="w-8 h-4 bg-slate-800 checked:bg-amber-500 rounded-full cursor-pointer appearance-none relative before:content-[''] before:absolute before:h-3 before:w-3 before:bg-slate-400 checked:before:bg-white before:rounded-full before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform">
+                        <button onclick="this.closest('.bg-slate-900\\/60').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MIDDLE SECTION: HABIT GRID (30 DAYS) ================= -->
+        <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl overflow-x-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 min-w-[1240px]">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Habit Execution Matrix</h2>
+                    <p class="text-[11px] text-slate-500">Granular tracking across a 30-day continuous cycle.</p>
+                </div>
+                
+                <div class="flex items-center gap-2 bg-slate-950/60 p-1.5 border border-slate-800 rounded-md">
+                    <span class="text-[11px] font-mono text-slate-400 pl-2 uppercase">New Entry:</span>
+                    <input type="text" id="habit-input" placeholder="e.g., Coding Practice, Fasting" 
+                           class="bg-[#0f1418] border border-slate-800 text-xs px-3 py-1.5 rounded text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 w-64">
+                    <button onclick="addNewHabitRow()" 
+                            class="bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs px-4 py-1.5 rounded transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Add Habit
+                    </button>
+                </div>
+
+                <div class="flex gap-4 text-[11px] text-slate-400">
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-teal-600 rounded-sm"></span> Completed</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-slate-900 border border-slate-800 rounded-sm"></span> Pending</span>
+                </div>
+            </div>
+
+            <div class="min-w-[1240px]">
+                <div class="grid grid-cols-[240px_1fr] border-b border-slate-800 pb-2 text-center text-[10px] font-mono tracking-wider font-bold text-slate-400">
+                    <div class="text-left pl-2">HABIT DEF / TARGET</div>
+                    <div class="grid grid-cols-30 gap-1 text-center">
+                        <script>
+                            for(let i=1; i<=30; i++) {
+                                document.write(`<div>${String(i).padStart(2, '0')}</div>`);
+                            }
+                        </script>
+                    </div>
+                </div>
+
+                <div id="habit-rows-container" class="divide-y divide-slate-800/60 text-xs">
+                    <div class="grid grid-cols-[240px_1fr] items-center py-2.5 hover:bg-slate-900/40 group">
+                        <div class="font-medium text-slate-300 pl-2 flex items-center justify-between pr-4">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-dumbbell text-slate-500 w-4"></i> Gym / Resistance Training
+                            </span>
+                            <button onclick="this.closest('.grid').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150 p-1">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-30 gap-1 justify-items-center">
+                            <script>
+                                for(let i=1; i<=30; i++) {
+                                    let checked = [1,2,3,5,6,7,8,10,12,13,14,15].includes(i) ? 'checked' : '';
+                                    document.write(`<input type="checkbox" class="matrix-checkbox" ${checked}>`);
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= WEEKLY PLANNER SECTION ================= -->
+        <section class="space-y-3">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Weekly Tactical Matrix (7-Day Micro-Allocations)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-7 gap-4" id="weekly-planner-container">
+                <script>
+                    const daysData = [
+                        { id: "mon", name: "Monday", tasks: ["Q3 Roadmap Review", "Deploy server node v2", "Cardio protocol - 45m"] },
+                        { id: "tue", name: "Tuesday", tasks: ["Sync with design crew", "Refactor auth middleware", "Review financial ledger"] },
+                        { id: "wed", name: "Wednesday", tasks: ["Mid-week architecture evaluation", "Database index tuning"] },
+                        { id: "thu", name: "Thursday", tasks: ["Technical writing sprint", "Inbound sales discovery"] },
+                        { id: "fri", name: "Friday", tasks: ["Sprint retrospective", "Deploy hotfixes to prod"] },
+                        { id: "sat", name: "Saturday", tasks: ["Deep rest / Decompress", "Meal prep pipeline"] },
+                        { id: "sun", name: "Sunday", tasks: ["Next-week scheduling", "Inbox zero execution"] }
+                    ];
+
+                    daysData.forEach((day) => {
+                        document.write(`
+                            <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-3 flex flex-col justify-between shadow-lg min-h-[260px]" id="card-${day.id}">
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <span class="text-xs font-bold text-white tracking-wide">${day.name}</span>
+                                        <div class="relative w-8 h-8 flex items-center justify-center">
+                                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                                <path class="text-slate-800" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                <path class="text-teal-400 progress-ring" id="ring-${day.id}" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            </svg>
+                                            <div class="absolute text-[8px] font-mono text-slate-300 font-bold" id="text-${day.id}">0%</div>
+                                        </div>
+                                    </div>
+                                    <ul class="space-y-2 text-[11px] text-slate-400 list-container" id="list-${day.id}">
+                        `);
+
+                        day.tasks.forEach((task, idx) => {
+                            let checkState = idx === 0 ? 'checked' : '';
+                            let lineThrough = checkState ? 'line-through text-slate-600' : '';
+                            document.write(`
+                                <li class="flex items-start justify-between group/item gap-1">
+                                    <label class="flex items-start gap-2 cursor-pointer flex-1">
+                                        <input type="checkbox" ${checkState} onchange="updateDayMetrics('${day.id}')" class="mt-0.5 w-3.5 h-3.5 rounded border-slate-800 bg-slate-900 accent-teal-600 task-checkbox cursor-pointer">
+                                        <span class="label-text ${lineThrough} leading-tight">${task}</span>
+                                    </label>
+                                    <button onclick="removeTacticalTask(this, '${day.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs" title="Remove Task">×</button>
+                                </li>
+                            `);
+                        });
+
+                        document.write(`
+                                    </ul>
+                                </div>
+                                <div class="mt-4 pt-2 border-t border-slate-900 space-y-2">
+                                    <div class="flex items-center gap-1.5 bg-slate-950/40 p-1 border border-slate-800 rounded">
+                                        <input type="text" placeholder="Add task..." onkeypress="handleTaskKeyPress(event, '${day.id}')" id="input-${day.id}" class="bg-transparent text-[10px] px-1 py-0.5 text-white placeholder-slate-600 focus:outline-none w-full">
+                                        <button onclick="addTacticalTask('${day.id}')" class="text-teal-500 hover:text-teal-400 px-1 font-bold"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                    </div>
+                                    <div class="flex justify-between items-center text-[9px] font-mono text-slate-500">
+                                        <span>TSK_COUNT: <b id="count-${day.id}">0</b></span>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+        </section>
+
+        <!-- ================= BOTTOM SECTION: METRICS RECOVERY OVER TIME ================= -->
+        <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
+            <div class="flex justify-between items-center mb-3">
+                <div>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Biometric Recovery & Performance Correlation</h2>
+                    <p class="text-[11px] text-slate-500">Continuous monitoring of sleeping architecture against holistic performance ratings.</p>
+                </div>
+            </div>
+            <div class="h-56">
+                <canvas id="biometricLineChart"></canvas>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        tailwind.config = { theme: { extend: { gridTemplateColumns: { '30': 'repeat(30, minmax(0, 1fr))' } } } }
+    </script>
+
+    <!-- JavaScript Core Logics Architecture -->
+    <script>
+        // --- AUTOMATIC DATE ENGINE ---
+        function runDynamicClock() {
+            const dateElement = document.getElementById('current-date');
+            const now = new Date();
+            
+            // Format options: Friday, July 03, 2026
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' };
+            dateElement.innerText = now.toLocaleDateString('en-US', options).toUpperCase();
+        }
+
+        // --- WEEKLY TACTICAL REMOVE & ADD ENGINE ---
+        function updateDayMetrics(dayId) {
+            const list = document.getElementById(`list-${dayId}`);
+            const totalTasks = list.querySelectorAll('li').length;
+            const checkedTasks = list.querySelectorAll('.task-checkbox:checked').length;
+            
+            const percentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+            
+            document.getElementById(`text-${dayId}`).innerText = `${percentage}%`;
+            document.getElementById(`ring-${dayId}`).setAttribute('stroke-dasharray', `${percentage}, 100`);
+            document.getElementById(`count-${dayId}`).innerText = totalTasks;
+
+            list.querySelectorAll('li').forEach(item => {
+                const cb = item.querySelector('.task-checkbox');
+                const txt = item.querySelector('.label-text');
+                if(cb.checked) {
+                    txt.classList.add('line-through', 'text-slate-600');
+                } else {
+                    txt.classList.remove('line-through', 'text-slate-600');
+                }
+            });
+        }
+
+        function handleTaskKeyPress(event, dayId) {
+            if (event.key === 'Enter') {
+                addTacticalTask(dayId);
+            }
+        }
+
+        function addTacticalTask(dayId) {
+            const input = document.getElementById(`input-${dayId}`);
+            const taskText = input.value.trim();
+            if(taskText === "") return;
+
+            const listContainer = document.getElementById(`list-${dayId}`);
+            
+            const li = document.createElement('li');
+            li.className = "flex items-start justify-between group/item gap-1";
+            li.innerHTML = `
+                <label class="flex items-start gap-2 cursor-pointer flex-1">
+                    <input type="checkbox" onchange="updateDayMetrics('${dayId}')" class="mt-0.5 w-3.5 h-3.5 rounded border-slate-800 bg-slate-900 accent-teal-600 task-checkbox cursor-pointer">
+                    <span class="label-text leading-tight">${taskText}</span>
+                </label>
+                <button onclick="removeTacticalTask(this, '${dayId}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs" title="Remove Task">×</button>
+            `;
+            
+            listContainer.appendChild(li);
+            input.value = ""; 
+            updateDayMetrics(dayId);
+        }
+
+        function removeTacticalTask(btn, dayId) {
+            btn.closest('li').remove();
+            updateDayMetrics(dayId);
+        }
+
+        // Initialize engines on DOM load
+        window.addEventListener('DOMContentLoaded', () => {
+            runDynamicClock();
+            ['mon','tue','wed','thu','fri','sat','sun'].forEach(id => updateDayMetrics(id));
+        });
+
+        // --- HABIT ACTIONS ENGINE ---
+        function addNewHabitRow() {
+            const inputField = document.getElementById('habit-input');
+            const habitName = inputField.value.trim();
+            if (habitName === '') { alert('Please provide a descriptive habit title.'); return; }
+
+            const container = document.getElementById('habit-rows-container');
+            const rowWrapper = document.createElement('div');
+            rowWrapper.className = 'grid grid-cols-[240px_1fr] items-center py-2.5 hover:bg-slate-900/40 transition-colors group';
+
+            const titleBlock = document.createElement('div');
+            titleBlock.className = 'font-medium text-slate-300 pl-2 flex items-center justify-between pr-4';
+            titleBlock.innerHTML = `
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-star text-teal-500 w-4"></i> ${habitName}
+                </span>
+                <button onclick="this.closest('.grid').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150 p-1">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            rowWrapper.appendChild(titleBlock);
+
+            const matrixBlock = document.createElement('div');
+            matrixBlock.className = 'grid grid-cols-30 gap-1 justify-items-center';
+            for (let i = 1; i <= 30; i++) {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'matrix-checkbox';
+                matrixBlock.appendChild(checkbox);
+            }
+            rowWrapper.appendChild(matrixBlock);
+            container.appendChild(rowWrapper);
+            inputField.value = '';
+        }
+
+        // --- ALARM TRIGGERS ENGINE ---
+        function createNewAlarm() {
+            const titleField = document.getElementById('alarm-title');
+            const timeField = document.getElementById('alarm-time');
+            const title = titleField.value.trim() || "Routine Trigger";
+            const timeVal = timeField.value;
+            if (!timeVal) { alert('Please select a valid activation time.'); return; }
+
+            const [hours, minutes] = timeVal.split(':');
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            const timeFormatted = `${String(displayHours).padStart(2, '0')}:${minutes} ${suffix}`;
+
+            const container = document.getElementById('alarm-list-container');
+            const alarmNode = document.createElement('div');
+            alarmNode.className = 'bg-slate-900/60 border border-slate-800 p-3 rounded-md flex items-center justify-between group';
+            alarmNode.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-amber-400"><i class="fa-solid fa-clock"></i></div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-200">${title}</div>
+                        <div class="text-[11px] font-mono text-slate-400">${timeFormatted}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" checked class="w-8 h-4 bg-slate-800 checked:bg-amber-500 rounded-full cursor-pointer appearance-none relative before:content-[''] before:absolute before:h-3 before:w-3 before:bg-slate-400 checked:before:bg-white before:rounded-full before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform">
+                    <button onclick="this.closest('.bg-slate-900\\/60').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+            `;
+            container.appendChild(alarmNode);
+            titleField.value = ''; timeField.value = '';
+        }
+    </script>
+
+    <!-- Analytics Charts Injections -->
+    <script>
+        const chartTicksConfig = { color: '#64748b', font: { size: 10, family: 'Courier New' } };
+        const ctxDaily = document.getElementById('dailyProgressChart').getContext('2d');
+        new Chart(ctxDaily, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{ data: [14, 19, 12, 16, 22, 9, 11], backgroundColor: 'rgba(20, 184, 166, 0.75)', borderColor: '#14b8a6', borderWidth: 1.5, borderRadius: 4, barThickness: 16 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: chartTicksConfig }, y: { grid: { color: 'rgba(30, 41, 59, 0.3)' }, ticks: chartTicksConfig } } }
+        });
+
+        const ctxGoals = document.getElementById('overallGoalsChart').getContext('2d');
+        new Chart(ctxGoals, {
+            type: 'doughnut',
+            data: { datasets: [{ data: [74, 26], backgroundColor: ['#0d9488', '#1e293b'], borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false } } }
+        });
+
+        const ctxBiometric = document.getElementById('biometricLineChart').getContext('2d');
+        new Chart(ctxBiometric, {
+            type: 'line',
+            data: {
+                labels: ['Day 01', 'Day 02', 'Day 03', 'Day 04', 'Day 05', 'Day 06', 'Day 07'],
+                datasets: [
+                    { data: [7.2, 6.8, 7.5, 8.0, 6.2, 5.9, 7.8], borderColor: '#14b8a6', backgroundColor: 'transparent', borderWidth: 2, tension: 0.35 },
+                    { data: [8.5, 7.9, 9.0, 8.8, 7.0, 6.5, 8.9], borderColor: '#475569', backgroundColor: 'transparent', borderWidth: 2, borderDash: [4, 4], tension: 0.2 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: chartTicksConfig }, y: { grid: { color: 'rgba(30, 41, 59, 0.3)' }, ticks: chartTicksConfig } } }
+        });
+    </script>
+</body>
+</html>

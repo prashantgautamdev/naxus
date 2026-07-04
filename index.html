@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Executive Productivity Dashboard</title>
-    <!-- Tailwind CSS for Grid structure and base utility styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for advanced visual rendering -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome for clean dashboard iconography -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -66,7 +63,6 @@
 
     <div class="max-w-[1700px] mx-auto space-y-6">
         
-        <!-- ================= HEADER REGION (WITH AUTOMATIC DATE ENGINE) ================= -->
         <header class="flex justify-between items-center border-b border-teal-950/40 pb-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
@@ -80,9 +76,7 @@
             </div>
         </header>
 
-        <!-- ================= TOP SECTION: ANALYTICS ================= -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Daily Progress (Bar Chart) -->
             <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Daily Execution Volume</h2>
@@ -93,7 +87,6 @@
                 </div>
             </div>
 
-            <!-- Overall Goals (Doughnut Chart) -->
             <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl flex flex-col justify-between">
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Macro Goal Completion</h2>
@@ -116,7 +109,6 @@
                 </div>
             </div>
 
-            <!-- Quick Stats Readout Panel -->
             <div class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl grid grid-cols-2 gap-4">
                 <div class="border border-slate-800/40 bg-slate-900/20 p-3 rounded flex flex-col justify-between">
                     <span class="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Current Streak</span>
@@ -149,50 +141,53 @@
             </div>
         </section>
 
-        <!-- ================= SECTION: ALARM & REMINDER SYSTEM ================= -->
         <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
                 <div>
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                         <i class="fa-solid fa-bell text-amber-500 animate-pulse"></i> Tactical Alarm & Reminder Hub
                     </h2>
-                    <p class="text-[11px] text-slate-500">Set time triggers for critical daily routines and matrix milestones.</p>
+                    <p class="text-[11px] text-slate-500">Set alarms with preset synthesized pitches, custom audio files, and rhythmic vibration.</p>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-2 bg-slate-950/60 p-1.5 border border-slate-800 rounded-md">
-                    <input type="text" id="alarm-title" placeholder="Alarm Title (e.g., Coding Time)" 
-                           class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 w-48">
+                <div class="flex flex-wrap items-center gap-2 bg-slate-950/60 p-2 border border-slate-800 rounded-md w-full xl:w-auto">
+                    <input type="text" id="alarm-title" placeholder="Alarm Title (e.g., Gym)" 
+                           class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 w-36">
                     <input type="time" id="alarm-time" 
                            class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white focus:outline-none focus:border-amber-500">
+                    
+                    <select id="alarm-sound-type" onchange="handleSoundTypeChange()" class="bg-[#0f1418] border border-slate-800 text-xs px-2 py-1.5 rounded text-white focus:outline-none focus:border-amber-500 cursor-pointer">
+                        <option value="classic">🔊 Classic Beep</option>
+                        <option value="siren">🚨 Digital Siren</option>
+                        <option value="chime">✨ Tech Chime</option>
+                        <option value="custom">📁 Upload Local File...</option>
+                    </select>
+
+                    <div id="local-file-container" class="hidden">
+                        <input type="file" id="alarm-file-input" accept="audio/*" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer max-w-[160px]">
+                    </div>
+
                     <button onclick="createNewAlarm()" 
-                            class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-4 py-1.5 rounded transition flex items-center gap-1.5">
+                            class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-4 py-1.5 rounded transition flex items-center gap-1.5 ml-auto xl:ml-0">
                         <i class="fa-solid fa-clock-numeral text-[10px]"></i> Create Trigger
                     </button>
                 </div>
             </div>
 
-            <div id="alarm-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <div class="bg-slate-900/60 border border-slate-800 p-3 rounded-md flex items-center justify-between group">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-amber-400">
-                            <i class="fa-solid fa-dumbbell"></i>
-                        </div>
-                        <div>
-                            <div class="text-xs font-bold text-slate-200">Gym Session</div>
-                            <div class="text-[11px] font-mono text-slate-400">06:00 AM</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" checked class="w-8 h-4 bg-slate-800 checked:bg-amber-500 rounded-full cursor-pointer appearance-none relative before:content-[''] before:absolute before:h-3 before:w-3 before:bg-slate-400 checked:before:bg-white before:rounded-full before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform">
-                        <button onclick="this.closest('.bg-slate-900\\/60').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                        </button>
-                    </div>
-                </div>
+            <div id="alarm-trigger-banner" class="hidden mb-3 p-3 bg-red-950/80 border border-red-800 rounded-md flex justify-between items-center animate-bounce">
+                <span class="text-xs font-bold text-red-200 font-mono flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-red-500 animate-ping"></i> 
+                    ALARM ACTIVE: <span id="active-alarm-name">CRITICAL EVENT</span> & [VIBRATING]
+                </span>
+                <button onclick="stopActiveAlarmSound()" class="bg-red-700 hover:bg-red-600 text-white text-xs px-3 py-1 font-bold rounded">
+                    Stop Alarm & Vibrate
+                </button>
             </div>
+
+            <div id="alarm-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                </div>
         </section>
 
-        <!-- ================= MIDDLE SECTION: HABIT GRID (30 DAYS) ================= -->
         <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl overflow-x-auto">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 min-w-[1240px]">
                 <div>
@@ -202,17 +197,12 @@
                 
                 <div class="flex items-center gap-2 bg-slate-950/60 p-1.5 border border-slate-800 rounded-md">
                     <span class="text-[11px] font-mono text-slate-400 pl-2 uppercase">New Entry:</span>
-                    <input type="text" id="habit-input" placeholder="e.g., Coding Practice, Fasting" 
+                    <input type="text" id="habit-input" placeholder="e.g., Coding Practice" 
                            class="bg-[#0f1418] border border-slate-800 text-xs px-3 py-1.5 rounded text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 w-64">
                     <button onclick="addNewHabitRow()" 
                             class="bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs px-4 py-1.5 rounded transition flex items-center gap-1.5">
                         <i class="fa-solid fa-plus text-[10px]"></i> Add Habit
                     </button>
-                </div>
-
-                <div class="flex gap-4 text-[11px] text-slate-400">
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-teal-600 rounded-sm"></span> Completed</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-slate-900 border border-slate-800 rounded-sm"></span> Pending</span>
                 </div>
             </div>
 
@@ -241,7 +231,7 @@
                         <div class="grid grid-cols-30 gap-1 justify-items-center">
                             <script>
                                 for(let i=1; i<=30; i++) {
-                                    let checked = [1,2,3,5,6,7,8,10,12,13,14,15].includes(i) ? 'checked' : '';
+                                    let checked = [1,2,3,5,6,7,8,10].includes(i) ? 'checked' : '';
                                     document.write(`<input type="checkbox" class="matrix-checkbox" ${checked}>`);
                                 }
                             </script>
@@ -251,19 +241,18 @@
             </div>
         </section>
 
-        <!-- ================= WEEKLY PLANNER SECTION ================= -->
         <section class="space-y-3">
             <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Weekly Tactical Matrix (7-Day Micro-Allocations)</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-7 gap-4" id="weekly-planner-container">
                 <script>
                     const daysData = [
-                        { id: "mon", name: "Monday", tasks: ["Q3 Roadmap Review", "Deploy server node v2", "Cardio protocol - 45m"] },
-                        { id: "tue", name: "Tuesday", tasks: ["Sync with design crew", "Refactor auth middleware", "Review financial ledger"] },
-                        { id: "wed", name: "Wednesday", tasks: ["Mid-week architecture evaluation", "Database index tuning"] },
-                        { id: "thu", name: "Thursday", tasks: ["Technical writing sprint", "Inbound sales discovery"] },
-                        { id: "fri", name: "Friday", tasks: ["Sprint retrospective", "Deploy hotfixes to prod"] },
-                        { id: "sat", name: "Saturday", tasks: ["Deep rest / Decompress", "Meal prep pipeline"] },
-                        { id: "sun", name: "Sunday", tasks: ["Next-week scheduling", "Inbox zero execution"] }
+                        { id: "mon", name: "Monday", tasks: ["Q3 Roadmap Review", "Deploy server node v2"] },
+                        { id: "tue", name: "Tuesday", tasks: ["Sync with design crew", "Refactor auth middleware"] },
+                        { id: "wed", name: "Wednesday", tasks: ["Mid-week architecture evaluation"] },
+                        { id: "thu", name: "Thursday", tasks: ["Technical writing sprint"] },
+                        { id: "fri", name: "Friday", tasks: ["Sprint retrospective", "Deploy hotfixes"] },
+                        { id: "sat", name: "Saturday", tasks: ["Deep rest / Decompress"] },
+                        { id: "sun", name: "Sunday", tasks: ["Next-week scheduling"] }
                     ];
 
                     daysData.forEach((day) => {
@@ -292,7 +281,7 @@
                                         <input type="checkbox" ${checkState} onchange="updateDayMetrics('${day.id}')" class="mt-0.5 w-3.5 h-3.5 rounded border-slate-800 bg-slate-900 accent-teal-600 task-checkbox cursor-pointer">
                                         <span class="label-text ${lineThrough} leading-tight">${task}</span>
                                     </label>
-                                    <button onclick="removeTacticalTask(this, '${day.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs" title="Remove Task">×</button>
+                                    <button onclick="removeTacticalTask(this, '${day.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs">×</button>
                                 </li>
                             `);
                         });
@@ -316,14 +305,8 @@
             </div>
         </section>
 
-        <!-- ================= BOTTOM SECTION: METRICS RECOVERY OVER TIME ================= -->
         <section class="bg-[#0f1418] border border-slate-800/80 rounded-lg p-4 shadow-xl">
-            <div class="flex justify-between items-center mb-3">
-                <div>
-                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Biometric Recovery & Performance Correlation</h2>
-                    <p class="text-[11px] text-slate-500">Continuous monitoring of sleeping architecture against holistic performance ratings.</p>
-                </div>
-            </div>
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Biometric Recovery & Performance Correlation</h2>
             <div class="h-56">
                 <canvas id="biometricLineChart"></canvas>
             </div>
@@ -335,24 +318,232 @@
         tailwind.config = { theme: { extend: { gridTemplateColumns: { '30': 'repeat(30, minmax(0, 1fr))' } } } }
     </script>
 
-    <!-- JavaScript Core Logics Architecture -->
     <script>
+        // --- DATA STORE FOR ALARMS ---
+        let registeredAlarms = [
+            { id: 'default-1', title: 'Gym Session', time: '06:00', enabled: true, soundType: 'classic', customAudioData: null, triggeredToday: false }
+        ];
+        let audioInterval = null;
+        let vibrateInterval = null;
+        let audioCtx = null;
+        let customAudioElement = null; // To play uploaded user local file
+
         // --- AUTOMATIC DATE ENGINE ---
         function runDynamicClock() {
             const dateElement = document.getElementById('current-date');
             const now = new Date();
-            
-            // Format options: Friday, July 03, 2026
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' };
             dateElement.innerText = now.toLocaleDateString('en-US', options).toUpperCase();
         }
 
-        // --- WEEKLY TACTICAL REMOVE & ADD ENGINE ---
+        // Dropdown toggle logic for local file uploader UI
+        function handleSoundTypeChange() {
+            const soundSelect = document.getElementById('alarm-sound-type');
+            const fileContainer = document.getElementById('local-file-container');
+            if (soundSelect.value === 'custom') {
+                fileContainer.classList.remove('hidden');
+            } else {
+                fileContainer.classList.add('hidden');
+            }
+        }
+
+        // --- ALARM NOTIFICATION ENGINE (PITCH ENGINE + LOCAL MP3 PLAYER) ---
+        function startAlarmNotification(alarm) {
+            if (audioInterval || customAudioElement) return; // Already running
+
+            if (alarm.soundType === 'custom' && alarm.customAudioData) {
+                // Play uploaded custom local audio file
+                customAudioElement = new Audio(alarm.customAudioData);
+                customAudioElement.loop = true;
+                customAudioElement.play().catch(err => console.log("Audio play gesture block:", err));
+            } else {
+                // Play built-in synthesized audio frequency oscillator
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioInterval = setInterval(() => {
+                    if(!audioCtx) return;
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    
+                    if (alarm.soundType === 'siren') {
+                        let freq = (Math.floor(Date.now() / 300) % 2 === 0) ? 950 : 650;
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                        osc.type = 'sawtooth';
+                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    } else if (alarm.soundType === 'chime') {
+                        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                        osc.type = 'sine';
+                        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                    } else {
+                        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                        osc.type = 'sine';
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    }
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                }, alarm.soundType === 'siren' ? 350 : 600);
+            }
+
+            // --- MOBILE VIBRATION MODULE ---
+            if (navigator.vibrate) {
+                navigator.vibrate([400, 200]); 
+                vibrateInterval = setInterval(() => {
+                    navigator.vibrate([400, 200]);
+                }, 600);
+            }
+        }
+
+        function stopActiveAlarmSound() {
+            // Stop synthesized timers
+            if (audioInterval) { clearInterval(audioInterval); audioInterval = null; }
+            if (audioCtx) { audioCtx.close(); audioCtx = null; }
+            
+            // Stop custom file audio
+            if (customAudioElement) {
+                customAudioElement.pause();
+                customAudioElement.currentTime = 0;
+                customAudioElement = null;
+            }
+
+            // Stop vibration
+            if (vibrateInterval) { clearInterval(vibrateInterval); vibrateInterval = null; }
+            if (navigator.vibrate) { navigator.vibrate(0); }
+            
+            document.getElementById('alarm-trigger-banner').classList.add('hidden');
+        }
+
+        // --- REALTIME ALARM ENGINE ENGINE ---
+        function checkAlarmsEngine() {
+            const now = new Date();
+            const currentTimeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            registeredAlarms.forEach(alarm => {
+                if (alarm.enabled && alarm.time === currentTimeString) {
+                    if (!alarm.triggeredToday) {
+                        alarm.triggeredToday = true;
+                        let labelText = alarm.soundType === 'custom' ? 'LOCAL FILE' : alarm.soundType.toUpperCase();
+                        document.getElementById('active-alarm-name').innerText = `${alarm.title.toUpperCase()} [TONE: ${labelText}]`;
+                        document.getElementById('alarm-trigger-banner').classList.remove('hidden');
+                        startAlarmNotification(alarm);
+                    }
+                } else if (currentTimeString === "00:00") {
+                    alarm.triggeredToday = false;
+                }
+            });
+        }
+
+        function renderAlarmsList() {
+            const container = document.getElementById('alarm-list-container');
+            container.innerHTML = '';
+
+            registeredAlarms.forEach(alarm => {
+                const [hours, minutes] = alarm.time.split(':');
+                const suffix = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = hours % 12 || 12;
+                const timeFormatted = `${String(displayHours).padStart(2, '0')}:${minutes} ${suffix}`;
+                
+                let icon = "🔊";
+                if(alarm.soundType === 'siren') icon = "🚨";
+                if(alarm.soundType === 'chime') icon = "✨";
+                if(alarm.soundType === 'custom') icon = "📁";
+
+                let soundLabel = alarm.soundType === 'custom' ? 'Local Audio' : alarm.soundType;
+
+                const alarmNode = document.createElement('div');
+                alarmNode.className = 'bg-slate-900/60 border border-slate-800 p-3 rounded-md flex items-center justify-between group';
+                alarmNode.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-amber-400 text-xs font-mono">
+                            ${icon}
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-200">${alarm.title}</div>
+                            <div class="text-[10px] font-mono text-slate-400">${timeFormatted} | ${soundLabel}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" ${alarm.enabled ? 'checked' : ''} 
+                               onchange="toggleAlarmState('${alarm.id}')" 
+                               class="w-8 h-4 bg-slate-800 checked:bg-amber-500 rounded-full cursor-pointer appearance-none relative before:content-[''] before:absolute before:h-3 before:w-3 before:bg-slate-400 checked:before:bg-white before:rounded-full before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform">
+                        <button onclick="removeAlarmRecord('${alarm.id}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(alarmNode);
+            });
+        }
+
+        function createNewAlarm() {
+            const titleField = document.getElementById('alarm-title');
+            const timeField = document.getElementById('alarm-time');
+            const soundSelect = document.getElementById('alarm-sound-type');
+            const fileInput = document.getElementById('alarm-file-input');
+            
+            const title = titleField.value.trim() || "Routine Trigger";
+            const timeVal = timeField.value;
+            const soundType = soundSelect.value;
+            
+            if (!timeVal) { alert('Please select a valid activation time.'); return; }
+
+            if (soundType === 'custom') {
+                // If user selected custom local file, extract data stream using FileReader API
+                if (fileInput.files.length === 0) {
+                    alert('Please select an audio file from your device first.');
+                    return;
+                }
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveAlarmObj(title, timeVal, soundType, e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveAlarmObj(title, timeVal, soundType, null);
+            }
+
+            // Cleanup fields
+            titleField.value = ''; timeField.value = ''; fileInput.value = '';
+            soundSelect.value = 'classic'; handleSoundTypeChange();
+        }
+
+        function saveAlarmObj(title, time, soundType, base64Audio) {
+            registeredAlarms.push({
+                id: 'alarm-' + Date.now(),
+                title: title,
+                time: time,
+                enabled: true,
+                soundType: soundType,
+                customAudioData: base64Audio,
+                triggeredToday: false
+            });
+            renderAlarmsList();
+        }
+
+        function toggleAlarmState(id) {
+            const alarm = registeredAlarms.find(a => a.id === id);
+            if(alarm) alarm.enabled = !alarm.enabled;
+        }
+
+        function removeAlarmRecord(id) {
+            registeredAlarms = registeredAlarms.filter(a => a.id !== id);
+            renderAlarmsList();
+        }
+
+        // Unlock browser security audio policy
+        document.addEventListener('click', () => {
+            if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
+        });
+
+        // --- WEEKLY PLANNER AND TASK ACTIONS PROTOCOLS ---
         function updateDayMetrics(dayId) {
             const list = document.getElementById(`list-${dayId}`);
             const totalTasks = list.querySelectorAll('li').length;
             const checkedTasks = list.querySelectorAll('.task-checkbox:checked').length;
-            
             const percentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
             
             document.getElementById(`text-${dayId}`).innerText = `${percentage}%`;
@@ -362,19 +553,12 @@
             list.querySelectorAll('li').forEach(item => {
                 const cb = item.querySelector('.task-checkbox');
                 const txt = item.querySelector('.label-text');
-                if(cb.checked) {
-                    txt.classList.add('line-through', 'text-slate-600');
-                } else {
-                    txt.classList.remove('line-through', 'text-slate-600');
-                }
+                if(cb.checked) txt.classList.add('line-through', 'text-slate-600');
+                else txt.classList.remove('line-through', 'text-slate-600');
             });
         }
 
-        function handleTaskKeyPress(event, dayId) {
-            if (event.key === 'Enter') {
-                addTacticalTask(dayId);
-            }
-        }
+        function handleTaskKeyPress(event, dayId) { if (event.key === 'Enter') addTacticalTask(dayId); }
 
         function addTacticalTask(dayId) {
             const input = document.getElementById(`input-${dayId}`);
@@ -382,7 +566,6 @@
             if(taskText === "") return;
 
             const listContainer = document.getElementById(`list-${dayId}`);
-            
             const li = document.createElement('li');
             li.className = "flex items-start justify-between group/item gap-1";
             li.innerHTML = `
@@ -390,99 +573,49 @@
                     <input type="checkbox" onchange="updateDayMetrics('${dayId}')" class="mt-0.5 w-3.5 h-3.5 rounded border-slate-800 bg-slate-900 accent-teal-600 task-checkbox cursor-pointer">
                     <span class="label-text leading-tight">${taskText}</span>
                 </label>
-                <button onclick="removeTacticalTask(this, '${dayId}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs" title="Remove Task">×</button>
+                <button onclick="removeTacticalTask(this, '${dayId}')" class="text-slate-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-opacity px-1 font-bold text-xs">×</button>
             `;
-            
             listContainer.appendChild(li);
             input.value = ""; 
             updateDayMetrics(dayId);
         }
 
-        function removeTacticalTask(btn, dayId) {
-            btn.closest('li').remove();
-            updateDayMetrics(dayId);
-        }
+        function removeTacticalTask(btn, dayId) { btn.closest('li').remove(); updateDayMetrics(dayId); }
 
-        // Initialize engines on DOM load
         window.addEventListener('DOMContentLoaded', () => {
             runDynamicClock();
+            renderAlarmsList();
             ['mon','tue','wed','thu','fri','sat','sun'].forEach(id => updateDayMetrics(id));
+            setInterval(checkAlarmsEngine, 1000);
         });
 
-        // --- HABIT ACTIONS ENGINE ---
         function addNewHabitRow() {
             const inputField = document.getElementById('habit-input');
             const habitName = inputField.value.trim();
-            if (habitName === '') { alert('Please provide a descriptive habit title.'); return; }
+            if (habitName === '') return;
 
             const container = document.getElementById('habit-rows-container');
             const rowWrapper = document.createElement('div');
-            rowWrapper.className = 'grid grid-cols-[240px_1fr] items-center py-2.5 hover:bg-slate-900/40 transition-colors group';
-
-            const titleBlock = document.createElement('div');
-            titleBlock.className = 'font-medium text-slate-300 pl-2 flex items-center justify-between pr-4';
-            titleBlock.innerHTML = `
-                <span class="flex items-center gap-2">
-                    <i class="fa-solid fa-star text-teal-500 w-4"></i> ${habitName}
-                </span>
-                <button onclick="this.closest('.grid').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150 p-1">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
+            rowWrapper.className = 'grid grid-cols-[240px_1fr] items-center py-2.5 hover:bg-slate-900/40 group';
+            rowWrapper.innerHTML = `
+                <div class="font-medium text-slate-300 pl-2 flex items-center justify-between pr-4">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-star text-teal-500 w-4"></i> ${habitName}</span>
+                    <button onclick="this.closest('.grid').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+                <div class="grid grid-cols-30 gap-1 justify-items-center"></div>
             `;
-            rowWrapper.appendChild(titleBlock);
-
-            const matrixBlock = document.createElement('div');
-            matrixBlock.className = 'grid grid-cols-30 gap-1 justify-items-center';
+            const matrix = rowWrapper.querySelector('.grid-cols-30');
             for (let i = 1; i <= 30; i++) {
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'matrix-checkbox';
-                matrixBlock.appendChild(checkbox);
+                matrix.innerHTML += `<input type="checkbox" class="matrix-checkbox">`;
             }
-            rowWrapper.appendChild(matrixBlock);
             container.appendChild(rowWrapper);
             inputField.value = '';
         }
-
-        // --- ALARM TRIGGERS ENGINE ---
-        function createNewAlarm() {
-            const titleField = document.getElementById('alarm-title');
-            const timeField = document.getElementById('alarm-time');
-            const title = titleField.value.trim() || "Routine Trigger";
-            const timeVal = timeField.value;
-            if (!timeVal) { alert('Please select a valid activation time.'); return; }
-
-            const [hours, minutes] = timeVal.split(':');
-            const suffix = hours >= 12 ? 'PM' : 'AM';
-            const displayHours = hours % 12 || 12;
-            const timeFormatted = `${String(displayHours).padStart(2, '0')}:${minutes} ${suffix}`;
-
-            const container = document.getElementById('alarm-list-container');
-            const alarmNode = document.createElement('div');
-            alarmNode.className = 'bg-slate-900/60 border border-slate-800 p-3 rounded-md flex items-center justify-between group';
-            alarmNode.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-amber-500/10 border border-amber-500/20 rounded-md text-amber-400"><i class="fa-solid fa-clock"></i></div>
-                    <div>
-                        <div class="text-xs font-bold text-slate-200">${title}</div>
-                        <div class="text-[11px] font-mono text-slate-400">${timeFormatted}</div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" checked class="w-8 h-4 bg-slate-800 checked:bg-amber-500 rounded-full cursor-pointer appearance-none relative before:content-[''] before:absolute before:h-3 before:w-3 before:bg-slate-400 checked:before:bg-white before:rounded-full before:top-0.5 before:left-0.5 checked:before:translate-x-4 before:transition-transform">
-                    <button onclick="this.closest('.bg-slate-900\\/60').remove()" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                </div>
-            `;
-            container.appendChild(alarmNode);
-            titleField.value = ''; timeField.value = '';
-        }
     </script>
 
-    <!-- Analytics Charts Injections -->
     <script>
         const chartTicksConfig = { color: '#64748b', font: { size: 10, family: 'Courier New' } };
-        const ctxDaily = document.getElementById('dailyProgressChart').getContext('2d');
-        new Chart(ctxDaily, {
+        new Chart(document.getElementById('dailyProgressChart').getContext('2d'), {
             type: 'bar',
             data: {
                 labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -491,15 +624,13 @@
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: chartTicksConfig }, y: { grid: { color: 'rgba(30, 41, 59, 0.3)' }, ticks: chartTicksConfig } } }
         });
 
-        const ctxGoals = document.getElementById('overallGoalsChart').getContext('2d');
-        new Chart(ctxGoals, {
+        new Chart(document.getElementById('overallGoalsChart').getContext('2d'), {
             type: 'doughnut',
             data: { datasets: [{ data: [74, 26], backgroundColor: ['#0d9488', '#1e293b'], borderWidth: 0 }] },
             options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false } } }
         });
 
-        const ctxBiometric = document.getElementById('biometricLineChart').getContext('2d');
-        new Chart(ctxBiometric, {
+        new Chart(document.getElementById('biometricLineChart').getContext('2d'), {
             type: 'line',
             data: {
                 labels: ['Day 01', 'Day 02', 'Day 03', 'Day 04', 'Day 05', 'Day 06', 'Day 07'],
